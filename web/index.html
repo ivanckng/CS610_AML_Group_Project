@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Sneaker Recognition | AI-Powered Shoe Identification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-shoe-prints"></i>
+                <span>SautyFash</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about" class="nav-link">Our Team</a>
+                <a href="#features" class="nav-link">Functions</a>
+                <a href="#contact" class="nav-link">Get Connected</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <div class="title-line-1">
+                        <span class="gradient-text">
+                            <i class="fas fa-robot"></i>
+                            Sneaker Recognition Expert
+                        </span>
+                    </div>
+                    <div class="title-line-2">
+                        <span class="gradient-text">
+                            Powered by SautyFash
+                        </span>
+                    </div>
+                    <div class="title-underline"></div>
+                </h1>
+                <p class="hero-subtitle">
+                    The Brands, The Models, We Know Them All!
+                </p>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-number">95%+</div>
+                        <div class="stat-label">How Accurate We Are</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">How Many Brands We Support</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">< 3s</div>
+                        <div class="stat-label">How Fast We Are</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="about" class="team-section">
+            <h2>
+                <i class="fas fa-users"></i>
+                Our Team Members
+            </h2>
+            <p class="team-intro">
+                Meet the passionate AI/ML Engineers behind SautyFash!
+            </p>
+            
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Cedric KOH Bo Xiang</h3>
+                    <p class="team-role">AI/ML Engineer</p>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>GAN Seng Zhan</h3>
+                    <p class="team-role">AI/ML Engineer</p>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3>GOH Yun Si</h3>
+                    <p class="team-role">AI/ML Engineer</p>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-chart"></i>
+                    </div>
+                    <h3>HUANG Mochen</h3>
+                    <p class="team-role">AI/ML Engineer</p>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="WU_Junqi.jpg" alt="WU Junqi" class="avatar-photo">
+                    </div>
+                    <h3>WU Junqi</h3>
+                    <p class="team-role">AI/ML Engineer</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload & Progress Section -->
+        <section class="upload-section">
+            <h2 id="sectionTitle">
+                <i class="fas fa-search-plus"></i>
+                <span id="titleText">Upload Your Sneaker Image</span>
+            </h2>
+            <div class="upload-card">
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="imageUpload" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Upload Here</h3>
+                        <p>Drag Here Or <span class="browse-link" id="browseLink"> Click to Upload</span></p>
+                        <div class="supported-formats">
+                            <span>Supported Formats: JPG, JPEG, PNG</span>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-area" id="previewArea">
+                        <div class="preview-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>Pending Image Uploaded</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Area (Hidden initially) -->
+                <div class="progress-area" id="progressArea" style="display:none;">
+                    <div class="canvas-container">
+                        <canvas id="shoeCanvas"></canvas>
+                        
+                        <!-- Progress Bar -->
+                        <div class="progress-container" id="progressContainer" style="display:none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-text" id="progressText">Identifying...</div>
+                        </div>
+                        
+                        <!-- Loader -->
+                        <div class="loader" id="loader">
+                            <div class="loader-content">
+                                <div class="modern-spinner"></div>
+                                <p id="loaderText">AI Analysing...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Overlay -->
+                        <div class="error-overlay" id="errorOverlay" style="display:none;">
+                            <div class="error-content">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Error, Please Try Again</h3>
+                                <p id="errorMessage">Unknwon Error</p>
+                                <button class="btn secondary-btn" onclick="document.getElementById('errorOverlay').style.display='none'">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="processButton" class="btn primary-btn" disabled>
+                        <i class="fas fa-magic"></i>
+                        Start to Identify
+                    </button>
+                    <button id="resetButton" class="btn secondary-btn" style="display:none;">
+                        <i class="fas fa-refresh"></i>
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section">
+            <h2>
+                <i class="fas fa-search-plus"></i>
+                Identification Result
+            </h2>
+            <div class="results-container">
+                <div id="recognitionResult" class="result-card">
+                    <div class="result-placeholder">
+                        <i class="fas fa-upload"></i>
+                        <p>Upload Image First</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <h2>Feature Highlights</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Deep Learning</h3>
+                    <p>Adopt the latest Convolutional Neural Network Model, Ensure High-Precision Recognition</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Fast Processing</h3>
+                    <p>Optimised Algorithm Architecture, 3 Seconds to Complete Identification Analysis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacy Protection</h3>
+                    <p>Image Processing Locally, No Upload to Server, Protect Your Privacy</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="logo">
+                    <i class="fas fa-shoe-prints"></i>
+                    <span>SautyFash</span>
+                </div>
+                <p>Professional AI Sneaker Recognition Platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> cs610group8@sautyfash.com</p>
+                <p><i class="fas fa-brain"></i> CS610 Group 8</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SautyFash. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
