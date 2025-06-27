@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleText = document.getElementById('titleText');
     const browseLink = document.getElementById('browseLink');
     const previewArea = document.getElementById('previewArea');
-    const processButton = document.getElementById('processButton');
+    const actionButton = document.getElementById('actionButton');
     const resetButton = document.getElementById('resetButton');
     const shoeCanvas = document.getElementById('shoeCanvas');
     const ctx = shoeCanvas.getContext('2d');
@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         // Reset button state
-        processButton.disabled = true;
-        processButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
+        actionButton.disabled = true;
+        actionButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
         
         // Reset upload area
         uploadArea.style.pointerEvents = 'auto';
@@ -210,6 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============ Event Handlers ============
     
+    // 上传图片后，按钮变为"Start to Identify"
+    function setToIdentify() {
+        actionButton.disabled = false;
+        actionButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
+    }
+
+    // 识别完成后，按钮变为"Re-Analyse"
+    function setToReanalyse() {
+        actionButton.disabled = false;
+        actionButton.innerHTML = '<i class="fas fa-redo"></i> Re-Analyse';
+    }
+
     // File upload handlers
     browseLink.addEventListener('click', (e) => {
         e.preventDefault();
@@ -248,36 +260,51 @@ document.addEventListener('DOMContentLoaded', () => {
         handleImageFile(file);
     });
 
-    // Process button handler
-    processButton.addEventListener('click', async () => {
+    // Action button handler
+    actionButton.addEventListener('click', async () => {
         if (!uploadedImage || isProcessing) {
             showError('Please upload an image or wait for the current processing to complete.');
             return;
         }
-        
-        isProcessing = true;
-        processButton.disabled = true;
-        animateButton(processButton, 'Identifying...', 'fas fa-spinner fa-spin');
-        
-        // Switch to progress mode
-        switchToProgressMode();
-        
-        try {
-            // Use uploaded image data instead of canvas data
-            const canvas = document.createElement('canvas');
-            const tempCtx = canvas.getContext('2d');
-            canvas.width = uploadedImage.width;
-            canvas.height = uploadedImage.height;
-            tempCtx.drawImage(uploadedImage, 0, 0);
-            
-            await startProcessingVisualization(canvas.toDataURL('image/jpeg', 0.9));
-        } catch (error) {
-            showError(`Identification Failed: ${error.message}`);
-            console.error('Processing error:', error);
-        } finally {
-            isProcessing = false;
-            processButton.disabled = false;
-            processButton.innerHTML = '<i class="fas fa-redo"></i> Reset';
+        if (actionButton.innerText.includes('Start to Identify')) {
+            isProcessing = true;
+            actionButton.disabled = true;
+            animateButton(actionButton, 'Identifying...', 'fas fa-spinner fa-spin');
+            switchToProgressMode();
+            try {
+                const canvas = document.createElement('canvas');
+                const tempCtx = canvas.getContext('2d');
+                canvas.width = uploadedImage.width;
+                canvas.height = uploadedImage.height;
+                tempCtx.drawImage(uploadedImage, 0, 0);
+                await startProcessingVisualization(canvas.toDataURL('image/jpeg', 0.9));
+            } catch (error) {
+                showError(`Identification Failed: ${error.message}`);
+                console.error('Processing error:', error);
+            } finally {
+                isProcessing = false;
+                setToReanalyse();
+            }
+        } else if (actionButton.innerText.includes('Re-Analyse')) {
+            // 重新识别
+            isProcessing = true;
+            actionButton.disabled = true;
+            animateButton(actionButton, 'Re-Analysing...', 'fas fa-spinner fa-spin');
+            switchToProgressMode();
+            try {
+                const canvas = document.createElement('canvas');
+                const tempCtx = canvas.getContext('2d');
+                canvas.width = uploadedImage.width;
+                canvas.height = uploadedImage.height;
+                tempCtx.drawImage(uploadedImage, 0, 0);
+                await startProcessingVisualization(canvas.toDataURL('image/jpeg', 0.9));
+            } catch (error) {
+                showError(`Re-Analyse Failed: ${error.message}`);
+                console.error('Re-Analyse error:', error);
+            } finally {
+                isProcessing = false;
+                setToReanalyse();
+            }
         }
     });
 
@@ -287,12 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirm = window.confirm('Processing in Progress, Are You Sure to Reset?');
             if (!confirm) return;
         }
-        
         animateButton(resetButton, 'Resetting...', 'fas fa-spinner fa-spin');
-        
         setTimeout(() => {
             resetUI();
             displaySuccessMessage('Reset Successfully, You Can Upload a New Image.');
+            setToIdentify();
         }, 500);
     });
     
@@ -318,8 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 
                 // Enable process button
-                processButton.disabled = false;
-                processButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
+                setToIdentify();
                 
                 // Add highlight effect
                 uploadArea.classList.add('highlight');
@@ -624,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'Enter':
                     e.preventDefault();
                     if (uploadedImage && !isProcessing) {
-                        processButton.click();
+                        actionButton.click();
                     }
                     break;
             }
