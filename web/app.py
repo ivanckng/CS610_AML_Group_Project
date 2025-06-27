@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import torch
 import torch.nn as nn
@@ -8,6 +8,7 @@ import io
 import base64
 import numpy as np
 import os
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +22,8 @@ val_test_transform = None
 def load_model():
     """Load pre-trained ResNet50 model"""
     global model, class_names, val_test_transform
+    
+    print("[INFO] Loading model...")
     
     # Define class names (from new_cnn.ipynb)
     class_names = [
@@ -54,20 +57,26 @@ def load_model():
     # Load trained weights
     model_path = '../model_bank/best_cnn_resnet50.pth'
     if os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path, map_location=device))
-        print(f"Model loaded from {model_path}")
+        try:
+            model.load_state_dict(torch.load(model_path, map_location=device))
+            print(f"[INFO] Model loaded from {model_path}")
+        except Exception as e:
+            print(f"[ERROR] Failed to load model: {e}")
+            traceback.print_exc()
+            return False
     else:
-        print(f"Warning: Model file {model_path} does not exist")
+        print(f"[ERROR] Model file {model_path} does not exist")
         return False
     
     model = model.to(device)
     model.eval()
-    print(f"Model loaded on device: {device}")
+    print(f"[INFO] Model loaded on device: {device}")
     return True
 
 def preprocess_image(image_data):
     """Preprocess image data"""
     try:
+        print("[INFO] Preprocessing image...")
         # Decode base64 image data
         if image_data.startswith('data:image'):
             # Remove data URL prefix
@@ -90,12 +99,14 @@ def preprocess_image(image_data):
         return image_tensor.to(device)
     
     except Exception as e:
-        print(f"Image preprocessing error: {str(e)}")
+        print(f"[ERROR] Image preprocessing error: {str(e)}")
+        traceback.print_exc()
         return None
 
 def predict_shoe(image_tensor):
     """Make prediction using the model"""
     try:
+        print("[INFO] Running model inference...")
         with torch.no_grad():
             outputs = model(image_tensor)
             probabilities = torch.softmax(outputs, dim=1)
@@ -113,17 +124,19 @@ def predict_shoe(image_tensor):
             }
     
     except Exception as e:
-        print(f"Prediction error: {str(e)}")
+        print(f"[ERROR] Prediction error: {str(e)}")
+        traceback.print_exc()
         return None
 
 @app.route('/predict', methods=['POST'])
 def predict():
     """Prediction endpoint"""
     try:
-        # Get request data
+        print("[INFO] /predict called")
         data = request.get_json()
-        
+        print(f"[INFO] Received data keys: {list(data.keys()) if data else data}")
         if not data or 'image' not in data:
+            print("[ERROR] Missing image data in request")
             return jsonify({'error': 'Missing image data'}), 400
         
         image_data = data['image']
@@ -131,11 +144,13 @@ def predict():
         # Preprocess image
         image_tensor = preprocess_image(image_data)
         if image_tensor is None:
+            print("[ERROR] Image preprocessing failed")
             return jsonify({'error': 'Image preprocessing failed'}), 400
         
         # Make prediction
         result = predict_shoe(image_tensor)
         if result is None:
+            print("[ERROR] Prediction failed")
             return jsonify({'error': 'Prediction failed'}), 500
         
         # Format response
@@ -146,12 +161,13 @@ def predict():
                 'confidence': result['confidence'] * 100  # Convert to percentage
             }
         }
-        
+        print(f"[INFO] Prediction response: {response}")
         return jsonify(response)
     
     except Exception as e:
-        print(f"API error: {str(e)}")
-        return jsonify({'error': f'Server error: {str(e)}'}), 500
+        print(f"[ERROR] API error: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': f'Server error: {str(e)}', 'trace': traceback.format_exc()}), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -164,14 +180,8 @@ def health_check():
 
 @app.route('/', methods=['GET'])
 def index():
-    """Root endpoint"""
-    return jsonify({
-        'message': 'Sneaker Recognition API',
-        'endpoints': {
-            'POST /predict': 'Predict sneaker type',
-            'GET /health': 'Health check'
-        }
-    })
+    """Root endpoint - serve the web UI"""
+    return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
     # Load model

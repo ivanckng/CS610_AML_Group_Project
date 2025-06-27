@@ -18,7 +18,10 @@ def check_dependencies():
     
     for package in required_packages:
         try:
-            __import__(package)
+            if package == 'pillow':
+                __import__('PIL')
+            else:
+                __import__(package)
         except ImportError:
             missing_packages.append(package)
     
