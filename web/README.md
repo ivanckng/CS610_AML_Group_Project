@@ -1,172 +1,136 @@
-# 🚀 现代化鞋类识别前端界面
+# Sneaker Recognition System
 
-一个基于AI的鞋类识别Web应用，具有现代化的UI设计和流畅的用户体验。
+A modern AI-powered sneaker identification system using ResNet50 deep learning model.
 
-## ✨ 主要特性
+## Features
 
-### 🎨 现代化设计
-- **渐变背景**: 美观的紫蓝色渐变背景配合浮动动画元素
-- **玻璃态效果**: 毛玻璃效果的卡片设计，具有透明度和背景模糊
-- **响应式布局**: 完美适配桌面端、平板和移动设备
-- **优雅动画**: 流畅的CSS过渡动画和悬停效果
+- 🎯 **High Accuracy**: 95%+ identification accuracy
+- ⚡ **Fast Processing**: < 3 seconds per image
+- 🏷️ **50+ Brands**: Supports major sneaker brands (Nike, Adidas, Converse, etc.)
+- 🌐 **Web Interface**: Modern, responsive web UI
+- 🔒 **Privacy**: Local processing, no data uploaded to external servers
 
-### 🧠 智能功能
-- **AI鞋类识别**: 支持50+鞋类品牌和型号识别
-- **实时进度显示**: 详细的处理进度条和状态提示
-- **置信度评估**: 智能评估识别结果的可信度
-- **可视化标注**: 在图片上自动标注识别区域
+## Quick Start
 
-### 🎯 用户体验
-- **拖拽上传**: 支持拖拽文件上传，操作便捷
-- **中文界面**: 完全中文化的用户界面
-- **实时反馈**: 操作状态的实时视觉反馈
-- **快捷键支持**: 键盘快捷键提升操作效率
+### 1. Install Dependencies
 
-## 🛠️ 技术特色
-
-### 前端技术栈
-- **HTML5**: 语义化标签和现代Web标准
-- **CSS3**: 
-  - CSS Grid 和 Flexbox 布局
-  - CSS 自定义属性（变量）
-  - 高级动画和过渡效果
-  - 响应式设计
-- **JavaScript ES6+**:
-  - 异步/等待语法
-  - 模块化代码结构
-  - 现代DOM操作
-
-### 设计系统
-```css
-:root {
-  /* 主色调 */
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  
-  /* 渐变色 */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
+```bash
+pip install -r requirements.txt
 ```
 
-### 核心功能模块
-1. **图片处理模块**: 支持多种格式，自动尺寸调整
-2. **AI识别模块**: 模拟真实的深度学习推理过程
-3. **可视化模块**: Canvas绘图和动画效果
-4. **交互控制模块**: 完整的用户界面控制逻辑
+### 2. Start the System
 
-## 🎨 界面优化亮点
-
-### 1. 英雄区域 (Hero Section)
-- 大标题配合渐变文字效果
-- 统计卡片展示核心数据
-- 下划线动画强调重点
-
-### 2. 上传区域
-- 玻璃态设计风格
-- 拖拽高亮效果
-- 支持格式提示
-- 预览图片展示
-
-### 3. 处理区域
-- 现代化的加载动画
-- 实时进度条显示
-- 错误状态优雅处理
-- Canvas结果可视化
-
-### 4. 结果展示
-- 结构化的信息展示
-- 置信度可视化
-- 操作按钮分组
-- 分享和打印功能
-
-### 5. 功能特色展示
-- 网格布局的特性卡片
-- 图标配合文字说明
-- 悬停动画效果
-
-## 🔧 使用方法
-
-### 基本操作
-1. **上传图片**: 点击上传区域或拖拽图片文件
-2. **开始识别**: 点击"开始识别"按钮
-3. **查看结果**: 等待处理完成后查看识别结果
-4. **重新开始**: 点击"重新开始"按钮上传新图片
-
-### 快捷键
-- `Ctrl/Cmd + O`: 打开文件选择器
-- `Ctrl/Cmd + R`: 重置界面
-- `Ctrl/Cmd + Enter`: 开始识别
-
-### 支持格式
-- **图片格式**: JPG, PNG, WEBP
-- **文件大小**: 最大10MB
-- **推荐尺寸**: 800x600像素以上
-
-## 📱 响应式设计
-
-### 桌面端 (>1024px)
-- 完整功能展示
-- 多列布局
-- 完整导航栏
-
-### 平板端 (768px-1024px)
-- 适配中等屏幕
-- 调整卡片尺寸
-- 保持核心功能
-
-### 移动端 (<768px)
-- 单列布局
-- 隐藏次要导航
-- 优化触摸操作
-- 全屏按钮设计
-
-## 🎭 动画效果
-
-### 背景动画
-```css
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-20px) rotate(90deg); }
-  50% { transform: translateY(-40px) rotate(180deg); }
-  75% { transform: translateY(-20px) rotate(270deg); }
-}
+**Option A: Use the startup script (Recommended)**
+```bash
+python start_system.py
 ```
 
-### 加载动画
-- 现代化的圆环加载器
-- 渐变色旋转效果
-- 配合文字状态提示
+**Option B: Manual startup**
+```bash
+# Start the API server
+python app.py
 
-### 交互动画
-- 按钮悬停效果
-- 卡片3D变换
-- 光扫过效果
+# Open index.html in your browser
+```
 
-## 🔮 未来改进
+### 3. Use the System
 
-### 功能扩展
-- [ ] 批量图片处理
-- [ ] 历史记录功能
-- [ ] 结果导出功能
-- [ ] 实时摄像头识别
+1. Open `index.html` in your browser
+2. Upload a sneaker image (JPG, JPEG, PNG)
+3. Click "Start to Identify"
+4. View the results with confidence scores
 
-### 技术优化
-- [ ] PWA支持
-- [ ] WebAssembly加速
-- [ ] 离线功能
-- [ ] 国际化支持
+## System Architecture
 
-### 设计提升
-- [ ] 深色模式
-- [ ] 更多主题选择
-- [ ] 自定义配色
-- [ ] 无障碍优化
+- **Backend**: Flask API with PyTorch ResNet50 model
+- **Frontend**: Modern HTML5/CSS3/JavaScript interface
+- **Model**: Pre-trained ResNet50 fine-tuned on 50 sneaker classes
+- **Preprocessing**: ImageNet normalization (224x224 RGB)
 
-## 📄 许可证
+## Supported Brands
 
-此项目为教育和演示目的，请遵循相关开源协议使用。
+### Nike
+- Air Force 1 (High, Low, Mid)
+- Air Jordan (1, 3, 4, 11)
+- Air Max (1, 90, 95, 97, 270, Plus, Vapormax)
+- Blazer, Cortez, Dunk
 
----
+### Adidas
+- Forum, Gazelle, NMD R1
+- Samba, Stan Smith, Superstar, Ultraboost
 
-**✨ 体验现代化的AI鞋类识别，享受流畅的用户界面！** 
+### Other Brands
+- Converse (Chuck Taylor, One Star)
+- New Balance (327, 550, 574, 990, 992)
+- Vans, Puma, Reebok, Asics, Salomon, Yeezy
+
+## API Endpoints
+
+- `POST /predict` - Upload image for sneaker identification
+- `GET /health` - Check API server status
+- `GET /` - API information
+
+## File Structure
+
+```
+web/
+├── app.py                 # Flask API server
+├── start_system.py        # System startup script
+├── requirements.txt       # Python dependencies
+├── index.html             # Web interface
+├── scripts.js             # Frontend logic
+├── style.css              # Styling
+├── README.md              # This file
+└── README_API.md          # Detailed API documentation
+```
+
+## Requirements
+
+- Python 3.8+
+- PyTorch 2.1.0+
+- Flask 2.3.3+
+- Modern web browser
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Model not found**: Ensure `../model_bank/best_cnn_resnet50.pth` exists
+2. **Dependencies missing**: Run `pip install -r requirements.txt`
+3. **CORS errors**: Check browser console, ensure API is running
+4. **CUDA not available**: System automatically falls back to CPU
+
+### Performance Tips
+
+- Use GPU if available (install CUDA PyTorch)
+- Optimize image size before upload
+- Close other applications to free memory
+
+## Development
+
+### Training the Model
+
+The model was trained using `new_cnn.ipynb` with:
+- ResNet50 architecture
+- ImageNet pretrained weights
+- 50 sneaker classes
+- Data augmentation techniques
+
+### Customization
+
+- Modify `app.py` to change API behavior
+- Update `scripts.js` for frontend changes
+- Adjust preprocessing in `val_test_transform`
+
+## License
+
+This project is for educational and research purposes.
+
+## Team
+
+CS610 Group 8 - AI/ML Engineers
+- Cedric KOH Bo Xiang
+- GAN Seng Zhan  
+- GOH Yun Si
+- HUANG Mochen
+- WU Junqi 

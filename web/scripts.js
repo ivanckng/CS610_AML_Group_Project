@@ -1,7 +1,7 @@
-// ============ 现代化鞋类识别 JavaScript ============
+// ============ Modern Sneaker Recognition JavaScript ============
 
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM 元素获取
+    // DOM elements
     const imageUpload = document.getElementById('imageUpload');
     const uploadArea = document.getElementById('uploadArea');
     const progressArea = document.getElementById('progressArea');
@@ -25,22 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedImage = null;
     let isProcessing = false;
 
-    // ============ 工具函数 ============
+    // ============ Utility Functions ============
     
     function switchToProgressMode() {
-        // 隐藏上传区域，显示进度区域
+        // Hide upload area, show progress area
         uploadArea.style.display = 'none';
         progressArea.style.display = 'flex';
         
-        // 更改标题
+        // Change title
         titleText.innerHTML = 'Identification Progress';
         
-        // 显示重置按钮
+        // Show reset button
         resetButton.style.display = 'inline-flex';
         
-        // 初始化Canvas显示上传的图片
+        // Initialize Canvas to display uploaded image
         if (uploadedImage) {
-            // 设置canvas尺寸
+            // Set canvas dimensions
             const maxWidth = 600;
             const maxHeight = 400;
             const aspectRatio = uploadedImage.width / uploadedImage.height;
@@ -53,21 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 shoeCanvas.width = maxHeight * aspectRatio;
             }
             
-            // 绘制图片到canvas
+            // Draw image to canvas
             ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
             ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
         }
     }
     
     function switchToUploadMode() {
-        // 显示上传区域，隐藏进度区域
+        // Show upload area, hide progress area
         uploadArea.style.display = 'block';
         progressArea.style.display = 'none';
         
-        // 恢复标题
+        // Restore title
         titleText.innerHTML = 'Upload Your Sneaker Image';
         
-        // 隐藏重置按钮
+        // Hide reset button
         resetButton.style.display = 'none';
     }
     
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showProgress(percentage, text = "Identifying...") {
-        // 确保progress area是可见的
+        // Ensure progress area is visible
         if (progressArea.style.display === 'none') {
             progressArea.style.display = 'flex';
         }
@@ -113,15 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadedImage = null;
         isProcessing = false;
         
-        // 切换回上传模式
+        // Switch back to upload mode
         switchToUploadMode();
         
-        // 重置Canvas
+        // Reset Canvas
         ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
         shoeCanvas.width = 0;
         shoeCanvas.height = 0;
         
-        // 重置预览区域
+        // Reset preview area
         previewArea.innerHTML = `
             <div class="preview-placeholder">
                 <i class="fas fa-image"></i>
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // 重置结果区域
+        // Reset result area
         recognitionResultDiv.innerHTML = `
             <div class="result-placeholder">
                 <i class="fas fa-upload"></i>
@@ -137,20 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // 重置按钮状态
+        // Reset button state
         processButton.disabled = true;
         processButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
         
-        // 重置上传区域
+        // Reset upload area
         uploadArea.style.pointerEvents = 'auto';
         uploadArea.classList.remove('highlight');
         
-        // 隐藏加载和错误状态
+        // Hide loading and error states
         hideLoader();
         hideError();
         hideProgress();
         
-        // 清空文件输入
+        // Clear file input
         imageUpload.value = '';
     }
 
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>${message}</span>
         `;
         
-        // 添加成功提示的样式
+        // Add success toast styles
         successDiv.style.cssText = `
             position: fixed;
             top: 100px;
@@ -183,12 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.body.appendChild(successDiv);
         
-        // 动画显示
+        // Animate in
         setTimeout(() => {
             successDiv.style.transform = 'translateX(0)';
         }, 100);
         
-        // 自动隐藏
+        // Auto hide
         setTimeout(() => {
             successDiv.style.transform = 'translateX(100%)';
             setTimeout(() => {
@@ -198,19 +198,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function animateButton(button, text, icon = '') {
-        const originalContent = button.innerHTML;
-        button.innerHTML = `${icon} ${text}`;
-        button.style.transform = 'scale(0.95)';
+        const originalText = button.innerHTML;
+        button.innerHTML = `<i class="${icon}"></i> ${text}`;
+        button.disabled = true;
         
         setTimeout(() => {
-            button.style.transform = 'scale(1)';
-        }, 150);
-        
-        return originalContent;
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
     }
 
-    // ============ 图片上传处理 ============
+    // ============ Event Handlers ============
     
+    // File upload handlers
     browseLink.addEventListener('click', (e) => {
         e.preventDefault();
         imageUpload.click();
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 拖拽功能
+    // Drag and drop functionality
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         if (!isProcessing) {
@@ -248,84 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleImageFile(file);
     });
 
-    function handleImageFile(file) {
-        if (!file) return;
-        
-        // 文件类型验证
-        if (!file.type.startsWith('image/')) {
-            showError('Please upload a valid image file (JPG, JPEG, PNG).');
-            return;
-        }
-        
-        // 文件大小验证 (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-            showError('Image file too large, please select an image less than 10MB.');
-            return;
-        }
-        
-        hideError();
-        showLoader("Loading Image...");
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            uploadedImage = new Image();
-            uploadedImage.onload = () => {
-                try {
-                    // 计算Canvas尺寸
-                    const maxWidth = 700;
-                    const scaleFactor = Math.min(maxWidth / uploadedImage.width, 1);
-                    shoeCanvas.width = uploadedImage.width * scaleFactor;
-                    shoeCanvas.height = uploadedImage.height * scaleFactor;
-
-                    // 绘制图片
-                    ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
-                    ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
-
-                    // 更新预览
-                    previewArea.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview Uploaded Image">
-                    `;
-
-                    // 更新UI状态
-                    processButton.disabled = false;
-                    processButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
-                    resetButton.style.display = 'inline-flex';
-                    uploadArea.style.pointerEvents = 'none';
-                    
-                    recognitionResultDiv.innerHTML = `
-                        <div class="result-placeholder">
-                            <i class="fas fa-rocket"></i>
-                            <p>Image Loaded Successfully, Click "Start to Identify" to Analyse.</p>
-                        </div>
-                    `;
-
-                    hideLoader();
-                    displaySuccessMessage('Image Uploaded Successfully!');
-                    
-                } catch (error) {
-                    showError('Processing Failed, Please Try Again.');
-                    console.error('Image processing error:', error);
-                }
-            };
-            
-            uploadedImage.onerror = () => {
-                showError('Image Loading Failed, Please Check the File Format.');
-                hideLoader();
-            };
-            
-            uploadedImage.src = e.target.result;
-        };
-        
-        reader.onerror = () => {
-            showError('File Reading Failed, Please Try Again.');
-            hideLoader();
-        };
-        
-        reader.readAsDataURL(file);
-    }
-
-    // ============ 识别处理 ============
-    
+    // Process button handler
     processButton.addEventListener('click', async () => {
         if (!uploadedImage || isProcessing) {
             showError('Please upload an image or wait for the current processing to complete.');
@@ -334,13 +257,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         isProcessing = true;
         processButton.disabled = true;
-        animateButton(processButton, 'Identifying...', '<i class="fas fa-spinner fa-spin"></i>');
+        animateButton(processButton, 'Identifying...', 'fas fa-spinner fa-spin');
         
-        // 切换到进度模式
+        // Switch to progress mode
         switchToProgressMode();
         
         try {
-            // 使用上传的图片数据而不是canvas数据
+            // Use uploaded image data instead of canvas data
             const canvas = document.createElement('canvas');
             const tempCtx = canvas.getContext('2d');
             canvas.width = uploadedImage.width;
@@ -358,134 +281,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Reset button handler
     resetButton.addEventListener('click', () => {
         if (isProcessing) {
             const confirm = window.confirm('Processing in Progress, Are You Sure to Reset?');
             if (!confirm) return;
         }
         
-        animateButton(resetButton, 'Resetting...', '<i class="fas fa-spinner fa-spin"></i>');
+        animateButton(resetButton, 'Resetting...', 'fas fa-spinner fa-spin');
         
         setTimeout(() => {
             resetUI();
             displaySuccessMessage('Reset Successfully, You Can Upload a New Image.');
         }, 500);
     });
-
-    async function startProcessingVisualization(imageDataUrl) {
-        let animationFrameId;
+    
+    function handleImageFile(file) {
+        if (!file.type.startsWith('image/')) {
+            showError('Please select a valid image file.');
+            return;
+        }
         
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImage = new Image();
+            uploadedImage.onload = function() {
+                // Update preview
+                previewArea.innerHTML = `
+                    <div class="preview-image">
+                        <img src="${e.target.result}" alt="Uploaded sneaker">
+                        <div class="preview-overlay">
+                            <i class="fas fa-check"></i>
+                            <p>Image Ready</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Enable process button
+                processButton.disabled = false;
+                processButton.innerHTML = '<i class="fas fa-magic"></i> Start to Identify';
+                
+                // Add highlight effect
+                uploadArea.classList.add('highlight');
+                
+                // Show success message
+                displaySuccessMessage('Image uploaded successfully!');
+            };
+            uploadedImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ============ Main Processing Function ============
+    
+    async function startProcessingVisualization(imageDataUrl) {
         try {
-            // 步骤1: 初始化
-            showProgress(10, "Initialising AI Model...");
+            isProcessing = true;
+            
+            // Step 1: Image preprocessing
+            showProgress(10, "Preprocessing Image...");
             await sleep(800);
             
-            // 步骤2: 预处理
-            showProgress(25, "Image Preprocessing...");
+            // Step 2: Feature extraction
+            showProgress(25, "Extracting Features...");
             await sleep(1000);
             
-            // 视觉预处理效果
-            ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
-            ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
-            ctx.globalAlpha = 0.3;
-            ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
-            ctx.fillRect(0, 0, shoeCanvas.width, shoeCanvas.height);
-            ctx.globalAlpha = 1.0;
+            // Step 3: Model loading
+            showProgress(50, "Loading AI Model...");
+            await sleep(600);
             
-            // 步骤3: 特征提取
-            showProgress(50, "Feature Extracting...");
-            await sleep(1200);
-            
-            // 步骤4: 模型推理
+            // Step 4: Model inference
             showProgress(75, "AI Model Analysing...");
             const recognitionResult = await callBackendAPI(imageDataUrl);
             
-            // 步骤5: 结果可视化
+            // Step 5: Result visualization
             showProgress(90, "Generating Results...");
-            await sleep(500);
+            await sleep(400);
             
-            // 绘制最终结果
+            // Step 6: Complete
+            showProgress(100, "Complete!");
+            await sleep(300);
+            
+            // Visualize results
             await visualizeResults(recognitionResult);
             
-            showProgress(100, "Identification Completed!");
-            await sleep(800);
-            
-            hideProgress();
-            displaySuccessMessage('Identification Completed!', 4000);
-            
         } catch (error) {
-            hideProgress();
-            throw error;
+            console.error('Processing error:', error);
+            showError(error.message || 'An error occurred during processing. Please try again.');
+        } finally {
+            isProcessing = false;
         }
     }
 
     async function visualizeResults(result) {
-        return new Promise((resolve) => {
-            // 清除并重绘原图
-            ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
-            ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
-
-            const bbox = result.bbox;
-            const scaleX = shoeCanvas.width / uploadedImage.width;
-            const scaleY = shoeCanvas.height / uploadedImage.height;
-
-            let currentBoxWidth = 0;
-            let currentBoxHeight = 0;
-            const targetWidth = bbox[2] * scaleX;
-            const targetHeight = bbox[3] * scaleY;
-
+        // Update result display
+        updateResultDisplay(result);
+        
+        // Animate bounding box on canvas
+        if (result.bbox && uploadedImage) {
             const drawBoxAnimation = () => {
-                // 重绘图片
+                const [x, y, width, height] = result.bbox;
+                
+                // Clear canvas
                 ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
                 ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
-
-                // 绘制动画边框
-                ctx.strokeStyle = '#667eea';
+                
+                // Draw bounding box
+                ctx.strokeStyle = '#4facfe';
                 ctx.lineWidth = 3;
-                ctx.setLineDash([8, 4]);
-                ctx.strokeRect(bbox[0] * scaleX, bbox[1] * scaleY, currentBoxWidth, currentBoxHeight);
-                ctx.setLineDash([]);
-
-                if (currentBoxWidth < targetWidth || currentBoxHeight < targetHeight) {
-                    currentBoxWidth = Math.min(targetWidth, currentBoxWidth + (targetWidth / 20));
-                    currentBoxHeight = Math.min(targetHeight, currentBoxHeight + (targetHeight / 20));
-                    requestAnimationFrame(drawBoxAnimation);
-                } else {
-                    // 绘制最终边框和标签
-                    ctx.strokeStyle = '#667eea';
-                    ctx.lineWidth = 4;
-                    ctx.strokeRect(bbox[0] * scaleX, bbox[1] * scaleY, targetWidth, targetHeight);
-
-                    // 标签背景
-                    const text = `${result.shoeModel}`;
-                    const confidence = `${result.confidence.toFixed(1)}%`;
-                    
-                    ctx.font = 'bold 16px Inter';
-                    const textWidth = ctx.measureText(text).width;
-                    const confWidth = ctx.measureText(confidence).width;
-                    const maxWidth = Math.max(textWidth, confWidth);
-                    
-                    const labelX = bbox[0] * scaleX;
-                    const labelY = bbox[1] * scaleY - 50;
-                    
-                    // 标签背景
-                    ctx.fillStyle = 'rgba(102, 126, 234, 0.9)';
-                    ctx.fillRect(labelX, labelY, maxWidth + 20, 45);
-                    
-                    // 标签文字
-                    ctx.fillStyle = 'white';
-                    ctx.fillText(text, labelX + 10, labelY + 18);
-                    ctx.font = '14px Inter';
-                    ctx.fillText(confidence, labelX + 10, labelY + 35);
-
-                    // 更新结果显示
-                    updateResultDisplay(result);
-                    resolve();
-                }
+                ctx.setLineDash([10, 5]);
+                ctx.strokeRect(x, y, width, height);
+                
+                // Draw label
+                ctx.fillStyle = '#4facfe';
+                ctx.font = 'bold 16px Inter';
+                ctx.fillText(result.shoeModel, x, y - 10);
             };
             
-            requestAnimationFrame(drawBoxAnimation);
-        });
+            drawBoxAnimation();
+        }
+        
+        // Show success message
+        displaySuccessMessage('Identification completed successfully!');
     }
 
     function updateResultDisplay(result) {
@@ -499,30 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (confidence < 85) {
             confidenceClass = 'medium';
             confidenceIcon = 'fas fa-info-circle';
-        }
-        
-        // 生成前5个预测结果的HTML
-        let top5HTML = '';
-        if (result.top5_predictions && result.top5_predictions.length > 0) {
-            top5HTML = `
-                <div class="result-item">
-                    <div class="result-label">
-                        <i class="fas fa-list-ol"></i>
-                        Top 5 Predictions
-                    </div>
-                    <div class="result-value">
-                        <div class="top5-predictions">
-                            ${result.top5_predictions.map((pred, index) => `
-                                <div class="prediction-item ${index === 0 ? 'top-prediction' : ''}">
-                                    <span class="prediction-rank">${index + 1}</span>
-                                    <span class="prediction-name">${pred.class}</span>
-                                    <span class="prediction-confidence">${(pred.confidence * 100).toFixed(1)}%</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
         }
         
         recognitionResultDiv.innerHTML = `
@@ -552,8 +445,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 
-                ${top5HTML}
-                
                 <div class="result-item">
                     <div class="result-label">
                         <i class="fas fa-map-marker-alt"></i>
@@ -577,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // 添加结果样式
+        // Add result styles
         const style = document.createElement('style');
         style.textContent = `
             .result-content {
@@ -612,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .result-item {
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
+                align-items: center;
                 margin-bottom: 1rem;
                 padding: 0.75rem;
                 background: var(--gray-50);
@@ -626,14 +517,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 gap: 0.5rem;
                 font-weight: 500;
                 color: var(--gray-700);
-                min-width: 120px;
             }
             
             .result-value {
                 font-weight: 600;
                 color: var(--gray-800);
-                flex: 1;
-                text-align: right;
             }
             
             .main-result {
@@ -647,45 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .confidence-high { color: #22c55e; }
             .confidence-medium { color: #f59e0b; }
             .confidence-low { color: #ef4444; }
-            
-            .top5-predictions {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                width: 100%;
-            }
-            
-            .prediction-item {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 0.5rem;
-                background: white;
-                border-radius: var(--radius-md);
-                border: 1px solid var(--gray-200);
-            }
-            
-            .prediction-item.top-prediction {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-            }
-            
-            .prediction-rank {
-                font-weight: bold;
-                min-width: 20px;
-                text-align: center;
-            }
-            
-            .prediction-name {
-                flex: 1;
-                font-size: 0.9rem;
-            }
-            
-            .prediction-confidence {
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
             
             .result-actions {
                 display: flex;
@@ -708,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ============ 后端API调用 ============
+    // ============ Backend API Call ============
     
     async function callBackendAPI(imageDataUrl) {
         try {
@@ -737,31 +586,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         uploadedImage.height * 0.2,
                         uploadedImage.width * 0.7,
                         uploadedImage.height * 0.6
-                    ],
-                    top5_predictions: result.prediction.top5_predictions
+                    ]
                 };
             } else {
-                throw new Error(result.error || '预测失败');
+                throw new Error(result.error || 'Prediction failed');
             }
             
         } catch (error) {
-            console.error('API调用错误:', error);
+            console.error('API call error:', error);
             throw error;
         }
     }
 
-    // ============ 工具函数 ============
+    // ============ Utility Functions ============
     
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // ============ 初始化 ============
+    // ============ Initialization ============
     
-    // 设置初始状态
+    // Set initial state
     resetUI();
     
-    // 添加键盘快捷键
+    // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey || e.metaKey) {
             switch(e.key) {
@@ -783,14 +631,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // 添加页面可见性API支持
+    // Add page visibility API support
     document.addEventListener('visibilitychange', () => {
         if (document.hidden && isProcessing) {
             console.log('Page Switched to Background, Processing Continues...');
         }
     });
     
-    // 添加错误处理
+    // Add error handling
     window.addEventListener('error', (event) => {
         console.error('Global Error:', event.error);
         if (isProcessing) {
@@ -798,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // 性能监控
+    // Performance monitoring
     if ('performance' in window) {
         window.addEventListener('load', () => {
             const loadTime = performance.now();
