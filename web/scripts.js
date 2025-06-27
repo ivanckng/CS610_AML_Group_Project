@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 步骤4: 模型推理
             showProgress(75, "AI Model Analysing...");
-            const recognitionResult = await simulateBackendCall(imageDataUrl);
+            const recognitionResult = await callBackendAPI(imageDataUrl);
             
             // 步骤5: 结果可视化
             showProgress(90, "Generating Results...");
@@ -501,6 +501,30 @@ document.addEventListener('DOMContentLoaded', () => {
             confidenceIcon = 'fas fa-info-circle';
         }
         
+        // 生成前5个预测结果的HTML
+        let top5HTML = '';
+        if (result.top5_predictions && result.top5_predictions.length > 0) {
+            top5HTML = `
+                <div class="result-item">
+                    <div class="result-label">
+                        <i class="fas fa-list-ol"></i>
+                        Top 5 Predictions
+                    </div>
+                    <div class="result-value">
+                        <div class="top5-predictions">
+                            ${result.top5_predictions.map((pred, index) => `
+                                <div class="prediction-item ${index === 0 ? 'top-prediction' : ''}">
+                                    <span class="prediction-rank">${index + 1}</span>
+                                    <span class="prediction-name">${pred.class}</span>
+                                    <span class="prediction-confidence">${(pred.confidence * 100).toFixed(1)}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         recognitionResultDiv.innerHTML = `
             <div class="result-content">
                 <div class="result-header">
@@ -527,6 +551,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${confidence.toFixed(2)}%
                     </div>
                 </div>
+                
+                ${top5HTML}
                 
                 <div class="result-item">
                     <div class="result-label">
@@ -586,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .result-item {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
                 margin-bottom: 1rem;
                 padding: 0.75rem;
                 background: var(--gray-50);
@@ -600,11 +626,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 gap: 0.5rem;
                 font-weight: 500;
                 color: var(--gray-700);
+                min-width: 120px;
             }
             
             .result-value {
                 font-weight: 600;
                 color: var(--gray-800);
+                flex: 1;
+                text-align: right;
             }
             
             .main-result {
@@ -618,6 +647,45 @@ document.addEventListener('DOMContentLoaded', () => {
             .confidence-high { color: #22c55e; }
             .confidence-medium { color: #f59e0b; }
             .confidence-low { color: #ef4444; }
+            
+            .top5-predictions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+            
+            .prediction-item {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.5rem;
+                background: white;
+                border-radius: var(--radius-md);
+                border: 1px solid var(--gray-200);
+            }
+            
+            .prediction-item.top-prediction {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+            }
+            
+            .prediction-rank {
+                font-weight: bold;
+                min-width: 20px;
+                text-align: center;
+            }
+            
+            .prediction-name {
+                flex: 1;
+                font-size: 0.9rem;
+            }
+            
+            .prediction-confidence {
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
             
             .result-actions {
                 display: flex;
@@ -640,45 +708,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ============ 后端API模拟 ============
+    // ============ 后端API调用 ============
     
-    function simulateBackendCall(imageDataUrl) {
-        return new Promise((resolve, reject) => {
-            // 模拟网络延迟和处理时间
-            setTimeout(() => {
-                if (imageDataUrl && imageDataUrl.length > 5000) {
-                    // 随机选择一个鞋款结果
-                    const shoeModels = [
-                        'Nike Air Force 1 Low',
-                        'Adidas Stan Smith',
-                        'Converse Chuck Taylor All Star',
-                        'Nike Air Max 90',
-                        'Adidas Ultraboost 22',
-                        'Vans Old Skool',
-                        'New Balance 574',
-                        'Nike Dunk Low',
-                        'Adidas Gazelle',
-                        'Puma Suede Classic'
-                    ];
-                    
-                    const randomModel = shoeModels[Math.floor(Math.random() * shoeModels.length)];
-                    const confidence = 85 + Math.random() * 12; // 85-97%
-                    
-                    resolve({
-                        shoeModel: randomModel,
-                        confidence: confidence,
-                        bbox: [
-                            uploadedImage.width * 0.15,
-                            uploadedImage.height * 0.2,
-                            uploadedImage.width * 0.7,
-                            uploadedImage.height * 0.6
-                        ]
-                    });
-                } else {
-                    reject(new Error('Invalid Image.'));
-                }
-            }, 1500 + Math.random() * 1000); // 1.5-2.5秒
-        });
+    async function callBackendAPI(imageDataUrl) {
+        try {
+            const response = await fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    image: imageDataUrl
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                return {
+                    shoeModel: result.prediction.shoeModel,
+                    confidence: result.prediction.confidence,
+                    bbox: [
+                        uploadedImage.width * 0.15,
+                        uploadedImage.height * 0.2,
+                        uploadedImage.width * 0.7,
+                        uploadedImage.height * 0.6
+                    ],
+                    top5_predictions: result.prediction.top5_predictions
+                };
+            } else {
+                throw new Error(result.error || '预测失败');
+            }
+            
+        } catch (error) {
+            console.error('API调用错误:', error);
+            throw error;
+        }
     }
 
     // ============ 工具函数 ============
