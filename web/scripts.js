@@ -402,30 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update result display
         updateResultDisplay(result);
         
-        // Animate bounding box on canvas
-        if (result.bbox && uploadedImage) {
-            const drawBoxAnimation = () => {
-                const [x, y, width, height] = result.bbox;
-                
-                // Clear canvas
-                ctx.clearRect(0, 0, shoeCanvas.width, shoeCanvas.height);
-                ctx.drawImage(uploadedImage, 0, 0, shoeCanvas.width, shoeCanvas.height);
-                
-                // Draw bounding box
-                ctx.strokeStyle = '#4facfe';
-                ctx.lineWidth = 3;
-                ctx.setLineDash([10, 5]);
-                ctx.strokeRect(x, y, width, height);
-                
-                // Draw label
-                ctx.fillStyle = '#4facfe';
-                ctx.font = 'bold 16px Inter';
-                ctx.fillText(result.shoeModel, x, y - 10);
-            };
-            
-            drawBoxAnimation();
-        }
-        
         // Show success message
         displaySuccessMessage('Identification completed successfully!');
     }
@@ -470,15 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 
-                <div class="result-item">
-                    <div class="result-label">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Detection Area
-                    </div>
-                    <div class="result-value">
-                        [${result.bbox.map(v => Math.round(v)).join(', ')}]
-                    </div>
-                </div>
+
                 
                 <div class="result-actions">
                     <button class="btn secondary-btn" onclick="window.print()">
@@ -605,13 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success) {
                 return {
                     shoeModel: result.prediction.shoeModel,
-                    confidence: result.prediction.confidence,
-                    bbox: [
-                        uploadedImage.width * 0.15,
-                        uploadedImage.height * 0.2,
-                        uploadedImage.width * 0.7,
-                        uploadedImage.height * 0.6
-                    ]
+                    confidence: result.prediction.confidence
                 };
             } else {
                 throw new Error(result.error || 'Prediction failed');
