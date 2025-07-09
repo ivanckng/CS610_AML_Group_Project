@@ -554,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function callBackendAPI(imageDataUrl) {
         try {
-            const response = await fetch('http://localhost:5000/predict', {
+            const response = await fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

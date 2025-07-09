@@ -55,7 +55,7 @@ def load_model():
     model.fc = nn.Linear(model.fc.in_features, len(class_names))
     
     # Load trained weights
-    model_path = '../model_bank/best_cnn_resnet50.pth'
+    model_path = 'model_bank/best_cnn_resnet50.pth'
     if os.path.exists(model_path):
         try:
             model.load_state_dict(torch.load(model_path, map_location=device))
@@ -72,6 +72,11 @@ def load_model():
     model.eval()
     print(f"[INFO] Model loaded on device: {device}")
     return True
+
+# Load model at import time so it works with Gunicorn/Cloud Run
+if not load_model():
+    print("\u274c Model loading failed, cannot start API")
+    raise RuntimeError("Model loading failed")
 
 def preprocess_image(image_data):
     """Preprocess image data"""
@@ -184,9 +189,6 @@ def index():
     return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
-    # Load model
-    if load_model():
-        print("🚀 Sneaker Recognition API starting...")
-        app.run(host='0.0.0.0', port=5000, debug=True)
-    else:
-        print("❌ Model loading failed, cannot start API") 
+    print("\U0001F680 Sneaker Recognition API starting...")
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port, debug=True) 
