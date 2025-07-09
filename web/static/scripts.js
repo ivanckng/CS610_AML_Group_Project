@@ -1,3 +1,9 @@
+// 全局fetch代理，调试用
+const _fetch = window.fetch;
+window.fetch = function() {
+  console.log('fetch called with:', arguments);
+  return _fetch.apply(this, arguments);
+};
 // ============ Modern Sneaker Recognition JavaScript ============
 
 document.addEventListener('DOMContentLoaded', () => {
