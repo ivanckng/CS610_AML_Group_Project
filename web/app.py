@@ -9,10 +9,8 @@ import base64
 import numpy as np
 import os
 import traceback
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-app = Flask(__name__, static_url_path='/sneaker_identification/static', static_folder='static')
-print('STATIC FOLDER:', app.static_folder)
+app = Flask(__name__)
 CORS(app)
 
 # Global variables
@@ -58,27 +56,16 @@ def load_model():
     
     # Load trained weights
     model_path = '../model_bank/best_cnn_resnet50.pth'
-    # Try alternative paths for App Engine
-    alternative_paths = [
-        '../model_bank/best_cnn_resnet50.pth',
-        'model_bank/best_cnn_resnet50.pth',
-        '/app/model_bank/best_cnn_resnet50.pth'
-    ]
-    
-    model_loaded = False
-    for path in alternative_paths:
-        if os.path.exists(path):
-            try:
-                model.load_state_dict(torch.load(path, map_location=device))
-                print(f"[INFO] Model loaded from {path}")
-                model_loaded = True
-                break
-            except Exception as e:
-                print(f"[WARNING] Failed to load model from {path}: {e}")
-                continue
-    
-    if not model_loaded:
-        print(f"[ERROR] Could not load model from any of the attempted paths: {alternative_paths}")
+    if os.path.exists(model_path):
+        try:
+            model.load_state_dict(torch.load(model_path, map_location=device))
+            print(f"[INFO] Model loaded from {model_path}")
+        except Exception as e:
+            print(f"[ERROR] Failed to load model: {e}")
+            traceback.print_exc()
+            return False
+    else:
+        print(f"[ERROR] Model file {model_path} does not exist")
         return False
     
     model = model.to(device)
@@ -141,11 +128,6 @@ def predict_shoe(image_tensor):
         traceback.print_exc()
         return None
 
-@app.route('/', methods=['GET'])
-def index():
-    """Root endpoint - serve the web UI"""
-    return send_from_directory('.', 'index.html')
-
 @app.route('/predict', methods=['POST'])
 def predict():
     """Prediction endpoint"""
@@ -196,17 +178,15 @@ def health_check():
         'device': str(device)
     })
 
-# Mount the app at /sneaker_identification
-application = DispatcherMiddleware(Flask('dummy_app'), {
-    '/sneaker_identification': app
-})
+@app.route('/', methods=['GET'])
+def index():
+    """Root endpoint - serve the web UI"""
+    return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
     # Load model
     if load_model():
         print("🚀 Sneaker Recognition API starting...")
-        # Get port from environment variable (for App Engine) or use default
-        port = int(os.environ.get('PORT', 5000))
-        app.run(host='0.0.0.0', port=port, debug=False)
+        app.run(host='0.0.0.0', port=5000, debug=True)
     else:
         print("❌ Model loading failed, cannot start API") 
